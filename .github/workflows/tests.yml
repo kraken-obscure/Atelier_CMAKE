@@ -2,85 +2,121 @@ name: Automatisation des tests
 on: push
 jobs:
   Compilation:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Compilation
         run: |
           last_directory=$(basename ${{ runner.workspace }})
-          git clone https://github.com/${{ github.repository }}.git
-          cd ./$last_directory
-          mkdir build
+          if [ -d "./$last_directory/.git" ]; then
+            cd ./$last_directory
+            git pull
+          else
+            git clone https://github.com/${{ github.repository }}.git
+            cd ./$last_directory
+          fi
+          mkdir -p build
           cd build
           cmake ..
           make
           make test
   Test_Add:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: Compilation
     steps:
       - name: Test fonction add
         run: |
           last_directory=$(basename ${{ runner.workspace }})
-          git clone https://github.com/${{ github.repository }}.git
-          cd ./$last_directory
-          mkdir build
+          if [ -d "./$last_directory/.git" ]; then
+            cd ./$last_directory
+            git pull
+          else
+            git clone https://github.com/${{ github.repository }}.git
+            cd ./$last_directory
+          fi
+          mkdir -p build
           cd build
           cmake ..
           make
           ./src/calculator add 10 5
-Test_Sub:
-    runs-on: ubuntu-latest
+  Test_Sub:
+    runs-on: self-hosted
     needs: Compilation
     steps:
       - name: Test fonction sub
         run: |
           last_directory=$(basename ${{ runner.workspace }})
-          git clone https://github.com/${{ github.repository }}.git
-          cd ./$last_directory
-          mkdir build
+          if [ -d "./$last_directory/.git" ]; then
+            cd ./$last_directory
+            git pull
+          else
+            git clone https://github.com/${{ github.repository }}.git
+            cd ./$last_directory
+          fi
+          mkdir -p build
           cd build
           cmake ..
           make
           ./src/calculator sub 10 5
   Test_Mul:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: Compilation
     steps:
       - name: Test fonction mul
         run: |
           last_directory=$(basename ${{ runner.workspace }})
-          git clone https://github.com/${{ github.repository }}.git
-          cd ./$last_directory
-          mkdir build
+          if [ -d "./$last_directory/.git" ]; then
+            cd ./$last_directory
+            git pull
+          else
+            git clone https://github.com/${{ github.repository }}.git
+            cd ./$last_directory
+          fi
+          mkdir -p build
           cd build
           cmake ..
           make
           ./src/calculator mul 10 5
   Test_Div:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: Compilation
     steps:
       - name: Test fonction div
         run: |
           last_directory=$(basename ${{ runner.workspace }})
-          git clone https://github.com/${{ github.repository }}.git
-          cd ./$last_directory
-          mkdir build
+          if [ -d "./$last_directory/.git" ]; then
+            cd ./$last_directory
+            git pull
+          else
+            git clone https://github.com/${{ github.repository }}.git
+            cd ./$last_directory
+          fi
+          mkdir -p build
           cd build
           cmake ..
           make
           ./src/calculator div 10 5
   Test_Car:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: Compilation
     steps:
       - name: Test fonction car
         run: |
           last_directory=$(basename ${{ runner.workspace }})
-          git clone https://github.com/${{ github.repository }}.git
-          cd ./$last_directory
-          mkdir build
+          if [ -d "./$last_directory/.git" ]; then
+            cd ./$last_directory
+            git pull
+          else
+            git clone https://github.com/${{ github.repository }}.git
+            cd ./$last_directory
+          fi
+          mkdir -p build
           cd build
           cmake ..
           make
-          ./src/calculator car 10
+          ./src/calculator car 5
+  Deploy:
+    runs-on: self-hosted
+    needs: [Test_Add, Test_Sub, Test_Mul, Test_Div, Test_Car]
+    steps:
+      - name: Deploy
+        run: echo "Déploiement de la solution"
